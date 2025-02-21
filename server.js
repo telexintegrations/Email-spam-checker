@@ -54,7 +54,7 @@ app.post("/", async (req, res) => {
     }
     
   
-    const webhookUrl = "https://ping.telex.im/v1/webhooks/0195137e-85ee-7fb1-b497-f76823035cf9";
+    const webhookUrl = "https://ping.telex.im/v1/webhooks/019529a6-d113-7f62-a6e4-14819439b4ec";
     const webhookData = {
       event_name: "BlacklistCheck",
       message: message,
