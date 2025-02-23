@@ -55,7 +55,7 @@ app.post("/", async (req, res) => {
       event_name: "BlacklistCheck",
       message: message,
       status: "success",
-      username: "Blacklist Response"
+      username: "email-spam-checker"
     };
 
     await axios.post(webhookUrl, webhookData, {
