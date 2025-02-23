@@ -1,12 +1,14 @@
 const express = require("express");
 const axios = require("axios");
+const cors = require("cors");
 const app = express();
 
+
+app.use(cors());
 
 app.use(express.json());
 
 app.post("/", async (req, res) => {
-  
   let ip = req.body.ip;
   if (!ip && req.body.message) {
     const strippedMessage = req.body.message.replace(/<[^>]+>/g, "").trim();
@@ -22,7 +24,6 @@ app.post("/", async (req, res) => {
     return res.status(400).json({ message: "No IP provided" });
   }
 
-  
   const ipv4Regex = /^(25[0-5]|2[0-4]\d|[01]?\d\d?)(\.(25[0-5]|2[0-4]\d|[01]?\d\d?)){3}$/;
   if (!ipv4Regex.test(ip)) {
     console.log("Invalid IP format, payload:", req.body);
@@ -30,10 +31,8 @@ app.post("/", async (req, res) => {
   }
 
   try {
-    
     const endpoint = `https://api.blacklistchecker.com/check/${ip}`;
-    
-    
+
     const response = await axios.get(endpoint, {
       auth: {
         username: "key_bNDcVCEXHzYPXkURObzsibLBh",
@@ -41,35 +40,31 @@ app.post("/", async (req, res) => {
       }
     });
 
-  
     const detectedLists = response.data.blacklists.filter(item => item.detected === true);
     const detectedCount = detectedLists.length;
-    
-    
+
     let message;
     if (detectedCount > 0) {
       message = `Very possibly scam, detected on ${detectedCount} site${detectedCount > 1 ? 's' : ''}`;
     } else {
       message = "its not a scam ip";
     }
-    
-  
+
     const webhookUrl = "https://ping.telex.im/v1/webhooks/019529a6-d113-7f62-a6e4-14819439b4ec";
     const webhookData = {
       event_name: "BlacklistCheck",
       message: message,
       status: "success",
-      username: "Blacklist Response", 
+      username: "Blacklist Response"
     };
-    
-    
+
     await axios.post(webhookUrl, webhookData, {
       headers: {
         "Accept": "application/json",
         "Content-Type": "application/json"
       }
     });
-    
+
     console.log("Webhook sent with message:", message);
     res.status(200).json({ message: message, blacklists: detectedLists });
   } catch (error) {
