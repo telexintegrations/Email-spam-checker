@@ -52,7 +52,7 @@ app.post("/", async (req, res) => {
 
     const webhookUrl = "https://ping.telex.im/v1/webhooks/019529a6-d113-7f62-a6e4-14819439b4ec";
     const webhookData = {
-      event_name: "BlacklistCheck",
+      event_name: "Email-spam-checker",
       message: message,
       status: "success",
       username: "email-spam-checker"
@@ -68,7 +68,7 @@ app.post("/", async (req, res) => {
     console.log("Webhook sent with message:", message);
     res.status(200).json({ message: message, blacklists: detectedLists });
   } catch (error) {
-    console.error("Error checking Blacklist Checker:", error.message);
+    console.error("Error checking email-spam-checker:", error.message);
     res.status(500).json({ message: "Error processing the IP" });
   }
 });
